@@ -18,4 +18,12 @@ app.use(express.static("public")) //config to store files and folders which is a
 
 app.use(cookieParser()) //cookie parser config
 
+
+//routes import  
+import userRouter from "./routes/user.routes.js";
+
+//routes declaration 
+app.use("/api/v1/users",userRouter)
+
+
 export { app }
