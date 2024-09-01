@@ -7,7 +7,7 @@ import { APIResponse } from "../utils/ApiResponse";
 const registerUser = asyncHandler(async (req, res) => {
     // get user details from frontend/postman 
     const { username, fullname, email, password } = req.body;
-    console.log("emial : ", email);
+    console.log("email : ", email);
 
     // validation - not empty 24:27
     if (
@@ -19,7 +19,8 @@ const registerUser = asyncHandler(async (req, res) => {
 
 
     // check if user already exist : username , email 
-    const existedUser = User.findOne({
+
+    const existedUser = await User.findOne({
         $or: [{ username }, { email }]
     })
     if (existedUser) {
@@ -28,7 +29,12 @@ const registerUser = asyncHandler(async (req, res) => {
 
     // check for images ,check for avatar 
     const avatarLocalPath = req.files?.avatar[0]?.path;
-    const coverImagePath = req.files?.coverImage[0]?.path;
+    //const coverImagePath = req.files?.coverImage[0]?.path;
+
+    let coverImageLocalPath; 
+    if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0){
+        coverImageLocalPath = req.files.coverImage[0].path;
+    }
 
     if (!avatarLocalPath) {
         throw new ApiError(400, "Avatar file is required ! ")
@@ -40,7 +46,7 @@ const registerUser = asyncHandler(async (req, res) => {
     if (!avatar) {
         throw new ApiError(400, "Avatar file is required ! ")
     }
-
+    
     // create user object - create entry in database
     const user = await User.create({
         fullname,
@@ -53,7 +59,7 @@ const registerUser = asyncHandler(async (req, res) => {
     const creaedUser = await User.findById(user._id).select(    // remove password and refresh token field from response 
         "-password -refreshToken"
     )
-
+    
     //check for user creation 
     if (!creaedUser) {
         throw new ApiError(500, "Failed to create user")
