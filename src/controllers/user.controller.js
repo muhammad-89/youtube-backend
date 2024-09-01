@@ -7,7 +7,7 @@ import { APIResponse } from "../utils/ApiResponse";
 const registerUser = asyncHandler(async (req, res) => {
     // get user details from frontend/postman 
     const { username, fullname, email, password } = req.body;
-    console.log("email : ", email);
+   // console.log("email : ", email);
 
     // validation - not empty 24:27
     if (
@@ -42,7 +42,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
     // upload them to cloudinary 
     const avatar = await uploadOnCloudinary(avatarLocalPath)
-    const coverImage = await uploadOnCloudinary(coverImagePath)
+    const coverImage = await uploadOnCloudinary(coverImageLocalPath)
     if (!avatar) {
         throw new ApiError(400, "Avatar file is required ! ")
     }
